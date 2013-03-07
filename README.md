@@ -71,7 +71,7 @@ Format:
 	* textarea
 	
 	For information on attribute types
-	go to [Concrete5::Types](http://www.concrete5.org/documentation/developers/	attributes/types/)
+	go to [Concrete5::Types](http://www.concrete5.org/documentation/developers/attributes/types/)
 3. `name` is what is displayed in the Concrete5 Dashboard
 
 Attributes of the type `select` have the following format:
