@@ -22,35 +22,31 @@ defined('C5_EXECUTE') or die(_("Access Denied."));
 class JollysciencePackage extends Package {
 
   protected $pkgDescription = 'Default package description.';
-  protected $appVersionRequired = '5.6.0';
-  protected $pkgVersion = '0.0.1';
 
   /**
    * __construct function.
    *
-   * Automatically sets handle and title using package
-   * directory name.
+   * Automatically title using package handle.
    *
    * @access public
    * @return void
    */
   public function __construct()
   {
-    
     if (!isset($this->pkgHandle)) {
-      $current_path =  dirname(__FILE__);
-      $pathFragments = explode('/', $current_path);
-      $package_handle = end($pathFragments);
-    } else {
-      $package_handle = $this->pkgHandle;
-    }
-    
-    if (!isset($this->pkgName)) {
-      $this->pkgName = ucwords(str_replace('_', ' ', $package_handle));
+      die('$pkgHandle must be set.')
     }
 
     if (!isset($this->pkgHandle)) {
-      $this->pkgHandle = $package_handle;
+      die('$pkgHandle must be set.');
+    }    
+    
+    if (!isset($this->appVersionRequired)){
+      die('$appVersionRequired must be set.');
+    }
+    
+    if (!isset($this->pkgName)) {
+      $this->pkgName = ucwords(str_replace('_', ' ', $this->pkgHandle));
     }
   }
 
@@ -74,9 +70,9 @@ class JollysciencePackage extends Package {
    *      'type' => 'select',
    *      'name' => 'Attribute Name',
    *      'selectOptions' => array(
-   *            'option1 value' => 'Option 1 Display Text',
-   *            'option2 value' => 'Option 2 Display Text',
-   *            'option3 value' => 'Option 3 Display Text'
+   *            'Option 1',
+   *            'Option 2',
+   *            'Option 3'
    *       ),
    *      'selectConfig' => array(
 	 *	          'akSelectAllowMultipleValues' => 0,
@@ -347,7 +343,7 @@ class JollysciencePackage extends Package {
   
       if (!empty($themes)) {
         foreach ($themes as $handle) {
-          $block = PageTheme::add($handle, $pkg)->applyToSite();
+          PageTheme::add($handle, $pkg);
         }
       }
     
