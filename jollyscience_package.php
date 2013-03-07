@@ -34,7 +34,7 @@ class JollysciencePackage extends Package {
   public function __construct()
   {
     if (!isset($this->pkgHandle)) {
-      die('$pkgHandle must be set.')
+      die('$pkgHandle must be set.');
     }
 
     if (!isset($this->pkgHandle)) {
