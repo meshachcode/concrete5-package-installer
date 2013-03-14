@@ -590,13 +590,15 @@ class JollysciencePackage extends Package {
           ),
           $pkg);
 
+/*
         if (!empty($pageTypes)) {
           foreach ($pageTypes as $pageType) {
-            if (is_object($pageType)) {
+            if (is_object($pageType) && !$pageType->isAvailableCollectionTypeAttribute($attr)) {
               $pageType->assignCollectionAttribute($attr);
             }
           }
         }
+*/
       }
 
       if (is_object($attr)) {
@@ -616,19 +618,8 @@ class JollysciencePackage extends Package {
 
         if (!empty($pageTypes)) {
           foreach ($pageTypes as $pageType) {
-            $install = true;
-            if (is_object($pageType)) {
-              $availableAttributes = $pageType->getAvailableAttributeKeys();
-
-              foreach ($availableAttributes as $availableAttribute) {
-                if ($availableAttribute->akHandle == $handle) {
-                  $install = false;
-                }
-              }
-
-              if ($install) {
-                $pageType->assignCollectionAttribute($attr);
-              }
+            if (!$pageType->isAvailableCollectionTypeAttribute($attr)) {
+              $pageType->assignCollectionAttribute($attr);
             }
           }
         }
