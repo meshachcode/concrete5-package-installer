@@ -357,10 +357,14 @@ if (!class_exists('JollysciencePackage')):
       }
       if (!empty($themes)) {
         foreach ($themes as $handle) {
-          PageTheme::add($handle, $pkg);
+          try{
+            PageTheme::add($handle, $pkg);
+          } catch (Exception $e) {
+            if ($e->getMessage()==PageTheme::E_THEME_INSTALLED) continue;
+            else throw $e;
+          }
         }
       }
-
     }
   }
 
