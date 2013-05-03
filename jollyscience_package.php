@@ -785,7 +785,7 @@ if (!class_exists('JollysciencePackage')):
     $newOptionSet = new SelectAttributeTypeOptionList();
     $displayOrder = 0;
     foreach ($selectOptions as $option) {
-      $opt = SelectAttributeTypeOption::getByValue(t($option));
+      $opt = SelectAttributeTypeOption::getByValue(t($option), $ak);
 
       if (!is_object($opt)) {
         $opt = SelectAttributeTypeOption::add($ak, t($option));
