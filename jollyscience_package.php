@@ -20,9 +20,9 @@
 
 defined('C5_EXECUTE') or die(_("Access Denied."));
 
-if (!class_exists('JollysciencePackage')):
+if(!class_exists('JollysciencePackage')):
 
-  class JollysciencePackage extends Package {
+class JollysciencePackage extends Package {
 
   protected $pkgDescription = 'Default package description.';
 
@@ -52,7 +52,6 @@ if (!class_exists('JollysciencePackage')):
       $this->pkgName = ucwords(str_replace('_', ' ', $this->pkgHandle));
     }
   }
-
 
   /**
    * commonAttributes
@@ -220,6 +219,7 @@ if (!class_exists('JollysciencePackage')):
     Loader::model('collection_attributes');
     Loader::model('file_set');
     Loader::model('single_page');
+
     $this->installThemes();
     $this->installBlocks();
     $this->installCommonAttributes();
@@ -675,7 +675,6 @@ if (!class_exists('JollysciencePackage')):
         }
       }
     }
-  }
   }
 
   /**
