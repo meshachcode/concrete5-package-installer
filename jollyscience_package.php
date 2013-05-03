@@ -226,6 +226,7 @@ class JollysciencePackage extends Package {
     $this->installPageTypes();
     $this->installPages();
     $this->installJobs();
+    parent::upgrade();
   }
 
 
