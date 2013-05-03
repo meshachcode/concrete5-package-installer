@@ -19,9 +19,10 @@
  */
 
 defined('C5_EXECUTE') or die(_("Access Denied."));
-if(!class_exists('JollysciencePackage')):
 
-class JollysciencePackage extends Package {
+if (!class_exists('JollysciencePackage')):
+
+  class JollysciencePackage extends Package {
 
   protected $pkgDescription = 'Default package description.';
 
@@ -41,16 +42,17 @@ class JollysciencePackage extends Package {
 
     if (!isset($this->pkgHandle)) {
       die('$pkgHandle must be set.');
-    }    
-    
-    if (!isset($this->appVersionRequired)){
+    }
+
+    if (!isset($this->appVersionRequired)) {
       die('$appVersionRequired must be set.');
     }
-    
+
     if (!isset($this->pkgName)) {
       $this->pkgName = ucwords(str_replace('_', ' ', $this->pkgHandle));
     }
   }
+
 
   /**
    * commonAttributes
@@ -77,10 +79,10 @@ class JollysciencePackage extends Package {
    *            'Option 3'
    *       ),
    *      'selectConfig' => array(
-	 *	          'akSelectAllowMultipleValues' => 0,
-	 *	          'akSelectAllowOtherValues' => 0,
-	 *	          'akSelectOptionDisplayOrder' => 'display_asc'
-	 *     	)     
+   *           'akSelectAllowMultipleValues' => 0,
+   *           'akSelectAllowOtherValues' => 0,
+   *           'akSelectOptionDisplayOrder' => 'display_asc'
+   *      )
    *     )
    *
    * Default attribute types:
@@ -162,10 +164,10 @@ class JollysciencePackage extends Package {
 
   /**
    * events
-   * 
+   *
    * For information on events and a valid list of event
    * names go to [Concrete5::Events](http://www.concrete5.org/documentation/developers/system/events/)
-   * 
+   *
    * Format:
    *
    * $events = array(
@@ -183,8 +185,8 @@ class JollysciencePackage extends Package {
    *
    */
   public $events = array();
-  
-  
+
+
   /**
    * on_start function.
    *
@@ -249,7 +251,7 @@ class JollysciencePackage extends Package {
 
   /**
    * installCommonAttributes function.
-   * 
+   *
    * Installs Attributes that may not
    * be bound to a page type, and adds
    * them to an Attribute Collection named
@@ -258,18 +260,20 @@ class JollysciencePackage extends Package {
    * @access public
    * @return void
    */
-  public function installCommonAttributes(){
-    if(!empty($this->commonAttributes)){
+  public function installCommonAttributes()
+  {
+    if (!empty($this->commonAttributes)) {
       $pkg = parent::getByHandle($this->pkgHandle);
       $att_coll = AttributeKeyCategory::getByHandle('collection');
       $att_set = AttributeSet::getByHandle($handle);
       if (!is_object($att_set)) {
         $att_set = $att_coll->addSet($this->pkgHandle, t($this->pkgName), $pkg);
-      }    
-    
+      }
+
       $this->installAttributes($this->commonAttributes, $pageTypes = array(), $att_set);
     }
   }
+
 
   /**
    * installPageTypes function.
@@ -342,25 +346,21 @@ class JollysciencePackage extends Package {
   public function installThemes()
   {
     $pkg = parent::getByHandle($this->pkgHandle);
-
     $themes = array();
     $path = DIRNAME_PACKAGES . DIRECTORY_SEPARATOR . $this->pkgHandle . DIRECTORY_SEPARATOR . 'themes';
-
-    if(file_exists($path)){
+    if (file_exists($path)) {
       $fileinfos = new DirectoryIterator($path);
       foreach ($fileinfos as $fileInfo) {
         if ($fileInfo->isDot()) continue;
         if (!$fileInfo->isDir()) continue;
         $themes[] = $fileInfo->getFilename();
       }
-  
-  
       if (!empty($themes)) {
         foreach ($themes as $handle) {
           PageTheme::add($handle, $pkg);
         }
       }
-    
+
     }
   }
 
@@ -379,18 +379,18 @@ class JollysciencePackage extends Package {
 
     $blocks = array();
     $path = DIRNAME_PACKAGES . DIRECTORY_SEPARATOR . $this->pkgHandle . DIRECTORY_SEPARATOR . 'blocks';
-    
-    
-    if(file_exists($path)){
+
+
+    if (file_exists($path)) {
       $fileinfos = new DirectoryIterator($path);
-  
+
       foreach ($fileinfos as $fileInfo) {
         if ($fileInfo->isDot()) continue;
         if (!$fileInfo->isDir()) continue;
-        
+
         $blocks[] = $fileInfo->getFilename();
       }
-  
+
       if (!empty($blocks)) {
         foreach ($blocks as $handle) {
           $block = BlockType::getByHandle($handle, $pkg);
@@ -418,25 +418,25 @@ class JollysciencePackage extends Package {
     $singlePages = array();
     $path = DIRNAME_PACKAGES . DIRECTORY_SEPARATOR . $this->pkgHandle .  DIRECTORY_SEPARATOR . 'single_pages';
 
-    if(file_exists($path)){
+    if (file_exists($path)) {
 
       $fileinfos = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($path)
       );
-  
+
       foreach ($fileinfos as $pathname => $fileinfo) {
         if (!$fileinfo->isFile()) continue;
         $pathname = str_replace(array($path, 'view.php', '.php'), '', $pathname);
-  /*       $pathname = rtrim($pathname, '/'); */
-        
+        /*       $pathname = rtrim($pathname, '/'); */
+
         if (substr($pathname, 0, 1) !== '/') {
           $pathname = '/'.$pathname;
         }
-  
+
         $singlePages[] = $pathname;
       }
-      
-      
+
+
       if (!empty($singlePages)) {
         foreach ($singlePages as $path) {
           SinglePage::add($path, $pkg);
@@ -445,10 +445,11 @@ class JollysciencePackage extends Package {
     }
   }
 
+
   /**
    * overrideSinglePage function.
-   * 
-   * Override's a core single page with the 
+   *
+   * Override's a core single page with the
    * packages version.
    *
    * @access public
@@ -460,15 +461,16 @@ class JollysciencePackage extends Package {
     $pkg = parent::getByHandle($this->pkgHandle);
     // Override /profile page
     $cID = Page::getByPath($path)->getCollectionID();
-    
-    if($cID && $cID !== 1){
+
+    if ($cID && $cID !== 1) {
       Loader::db()->execute('update Pages set pkgID = ? where cID = ?', array($pkg->pkgID, $cID));
-    }    
+    }
   }
+
 
   /**
    * unOverrideSinglePage function.
-   * 
+   *
    * UnOverride's a core single page so that
    * it uses the core version.
    *
@@ -479,11 +481,12 @@ class JollysciencePackage extends Package {
   public function unOverrideSinglePage($path)
   {
     $cID = Page::getByPath($path)->getCollectionID();
-    
-    if($cID && $cID !== 1){
+
+    if ($cID && $cID !== 1) {
       Loader::db()->execute('update Pages set pkgID = NULL where cID = ?', array($cID));
-    }    
+    }
   }
+
 
   /**
    * Scans `jobs` directory and installs found jobs
@@ -493,21 +496,21 @@ class JollysciencePackage extends Package {
     $pkg = parent::getByHandle($this->pkgHandle);
     $path = DIRNAME_PACKAGES . DIRECTORY_SEPARATOR . $this->pkgHandle . DIRECTORY_SEPARATOR . 'jobs';
 
-    if(file_exists($path)){
+    if (file_exists($path)) {
 
       $fileinfos = new DirectoryIterator($path);
-  
+
       $jobs = array();
-  
+
       foreach ($fileinfos as $fileInfo) {
         if ($fileInfo->isDot()) continue;
         if (!$fileInfo->isFile()) continue;
         $jobs[] = str_replace('.php', '', $fileInfo->getFilename());
       }
-      
+
       if (!empty($jobs)) {
         Loader::model("job");
-  
+
         foreach ($jobs as $handle) {
           $job = Job::getByHandle($handle);
           if (empty($job) || !is_object($job)) {
@@ -578,7 +581,7 @@ class JollysciencePackage extends Package {
       $pageType = CollectionType::add($data, $pkg);
     }
 
-    if(is_object($pageType)){
+    if (is_object($pageType)) {
       $pageType->populateAvailableAttributeKeys();
     }
 
@@ -612,7 +615,7 @@ class JollysciencePackage extends Package {
   public function installAttributes($attributes, $pageTypes = array(), $att_set = null)
   {
     $pkg = parent::getByHandle($this->pkgHandle);
-    
+
     if (!is_array($pageTypes)) {
       $pageTypes = array($pageTypes);
     }
@@ -657,11 +660,11 @@ class JollysciencePackage extends Package {
         }
 
         if ($attribute['type'] == 'select' && !empty($attribute['selectOptions'])) {
-          
-          if(empty($attribute['selectConfig'])){
+
+          if (empty($attribute['selectConfig'])) {
             $attribute['selectConfig'] = array();
           }
-          
+
           $this->addSelectOptions($attr, $attribute['selectConfig'], $attribute['selectOptions']);
         }
 
@@ -742,66 +745,68 @@ class JollysciencePackage extends Package {
    * Handles creating select options for Select Attribute Type
    */
 
-	public function addSelectOptions($ak, $data, $selectOptions) {
-		$defaults = array(
-		  'akSelectAllowMultipleValues' => 0,
-		  'akSelectAllowOtherValues' => 0,
-		  'akSelectOptionDisplayOrder' => 'display_asc'
-		);
-		
-		$data = array_merge($defaults, $data);
-		
-		$db = Loader::db();
+  public function addSelectOptions($ak, $data, $selectOptions)
+  {
+    $defaults = array(
+      'akSelectAllowMultipleValues' => 0,
+      'akSelectAllowOtherValues' => 0,
+      'akSelectOptionDisplayOrder' => 'display_asc'
+    );
 
-		$initialOptionSet = array();//$attr->getOptions();
-		
-		$akSelectAllowMultipleValues = $data['akSelectAllowMultipleValues'];
-		$akSelectAllowOtherValues = $data['akSelectAllowOtherValues'];
-		$akSelectOptionDisplayOrder = $data['akSelectOptionDisplayOrder'];
-		
-		if ($data['akSelectAllowMultipleValues'] != 1) {
-			$akSelectAllowMultipleValues = 0;
-		}
-		if ($data['akSelectAllowOtherValues'] != 1) {
-			$akSelectAllowOtherValues = 0;
-		}
-		if (!in_array($data['akSelectOptionDisplayOrder'], array('display_asc', 'alpha_asc', 'popularity_desc'))) {
-			$akSelectOptionDisplayOrder = 'display_asc';
-		}
-				
-		// now we have a collection attribute key object above.
-		$db->Replace('atSelectSettings', array(
-			'akID' => $ak->getAttributeKeyID(), 
-			'akSelectAllowMultipleValues' => $akSelectAllowMultipleValues, 
-			'akSelectAllowOtherValues' => $akSelectAllowOtherValues,
-			'akSelectOptionDisplayOrder' => $akSelectOptionDisplayOrder
-		), array('akID'), true);
-		
-		// Now we add the options
-		$newOptionSet = new SelectAttributeTypeOptionList();
-		$displayOrder = 0;
-		foreach($selectOptions as $option) {
-			$opt = SelectAttributeTypeOption::getByValue(t($option));
-			
-			if(!is_object($opt)){
-		    $opt = SelectAttributeTypeOption::add($ak, t($option));
-			}
-			
-			if ($akSelectOptionDisplayOrder == 'display_asc') {
-				$opt->setDisplayOrder($displayOrder);
-			}
-			$newOptionSet->add($opt);
-			$displayOrder++;
-		}
-		
-		// Now we remove all options that appear in the 
-		// old values list but not in the new
-		foreach($initialOptionSet as $iopt) {
-			if (!$newOptionSet->contains($iopt)) {
-				$iopt->delete();
-			}
-		}
-	}
+    $data = array_merge($defaults, $data);
+
+    $db = Loader::db();
+
+    $initialOptionSet = array();//$attr->getOptions();
+
+    $akSelectAllowMultipleValues = $data['akSelectAllowMultipleValues'];
+    $akSelectAllowOtherValues = $data['akSelectAllowOtherValues'];
+    $akSelectOptionDisplayOrder = $data['akSelectOptionDisplayOrder'];
+
+    if ($data['akSelectAllowMultipleValues'] != 1) {
+      $akSelectAllowMultipleValues = 0;
+    }
+    if ($data['akSelectAllowOtherValues'] != 1) {
+      $akSelectAllowOtherValues = 0;
+    }
+    if (!in_array($data['akSelectOptionDisplayOrder'], array('display_asc', 'alpha_asc', 'popularity_desc'))) {
+      $akSelectOptionDisplayOrder = 'display_asc';
+    }
+
+    // now we have a collection attribute key object above.
+    $db->Replace('atSelectSettings', array(
+        'akID' => $ak->getAttributeKeyID(),
+        'akSelectAllowMultipleValues' => $akSelectAllowMultipleValues,
+        'akSelectAllowOtherValues' => $akSelectAllowOtherValues,
+        'akSelectOptionDisplayOrder' => $akSelectOptionDisplayOrder
+      ), array('akID'), true);
+
+    // Now we add the options
+    $newOptionSet = new SelectAttributeTypeOptionList();
+    $displayOrder = 0;
+    foreach ($selectOptions as $option) {
+      $opt = SelectAttributeTypeOption::getByValue(t($option));
+
+      if (!is_object($opt)) {
+        $opt = SelectAttributeTypeOption::add($ak, t($option));
+      }
+
+      if ($akSelectOptionDisplayOrder == 'display_asc') {
+        $opt->setDisplayOrder($displayOrder);
+      }
+      $newOptionSet->add($opt);
+      $displayOrder++;
+    }
+
+    // Now we remove all options that appear in the
+    // old values list but not in the new
+    foreach ($initialOptionSet as $iopt) {
+      if (!$newOptionSet->contains($iopt)) {
+        $iopt->delete();
+      }
+    }
+  }
+
 
   /**
    * updatePageType function.
@@ -840,17 +845,22 @@ class JollysciencePackage extends Package {
 
     }
   }
-  
-  public function hookEvents(){
-    if(!empty($this->events)){
-      foreach($this->events as $event => $eventActions){
-        foreach($eventActions as $action){
+
+
+  public function hookEvents()
+  {
+    if (!empty($this->events)) {
+      foreach ($this->events as $event => $eventActions) {
+        foreach ($eventActions as $action) {
           $path = 'packages' . DIRECTORY_SEPARATOR . $this->pkgHandle . DIRECTORY_SEPARATOR .$action['path'];
           Events::extend($event, $action['class'], $action['method'],  $path);
         }
       }
     }
   }
+
+
 }
+
 
 endif;
