@@ -218,7 +218,6 @@ class JollysciencePackage extends Package {
     Loader::model('collection_attributes');
     Loader::model('file_set');
     Loader::model('single_page');
-
     $this->installThemes();
     $this->installBlocks();
     $this->installCommonAttributes();
