@@ -19,6 +19,8 @@
  */
 
 defined('C5_EXECUTE') or die(_("Access Denied."));
+if(!class_exists('JollysciencePackage')):
+
 class JollysciencePackage extends Package {
 
   protected $pkgDescription = 'Default package description.';
@@ -747,3 +749,5 @@ class JollysciencePackage extends Package {
     }
   }
 }
+
+endif;
