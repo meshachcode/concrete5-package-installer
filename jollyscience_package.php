@@ -103,6 +103,17 @@ class JollysciencePackage extends Package {
   public $commonAttributes = array();
 
   /**
+   * userAttributes
+   *
+   * Attributes that are applied to Users.
+   * In the same format as $commonAttributes
+   *
+   * @var array
+   * @access protected
+   */
+  protected $userAttributes = array();
+
+  /**
    * pageTypes
    *
    * Associative Array used for generating page types. Each page
@@ -211,6 +222,7 @@ class JollysciencePackage extends Package {
     $this->installThemes();
     $this->installBlocks();
     $this->installCommonAttributes();
+    $this->installUserAttributes();
     $this->installSinglePages();
     $this->installPageTypes();
     $this->installPages();
@@ -674,6 +686,57 @@ class JollysciencePackage extends Package {
       }
     }
   }
+
+  /**
+   * installUserAttributes function.
+   * Create custom user attributes.
+   *
+   * @access public
+   * @param mixed $attributes
+   * @return void
+   */
+  public function installUserAttributes($attributes = null)
+  {
+    // If no attributes passed then take the default user attributes
+    if (empty($attributes)) {
+      $attributes = $this->userAttributes;
+    }
+
+    $pkg = parent::getByHandle($this->pkgHandle);
+
+    foreach ($attributes as $handle => $attribute) {
+      $attr = UserAttributeKey::getByHandle($handle);
+
+      $options = array(
+        'akHandle' => $handle,
+        'akName' => t($attribute['name']),
+      );
+
+      if (!empty($attribute['options'])) {
+        $options = array_merge($options, $attribute['options']);
+      }
+
+      if (!is_object($attr)) {
+        $attr = UserAttributeKey::add(
+          AttributeType::getByHandle($attribute['type']),
+          $options,
+          $pkg);
+      } else {
+        $attr->update($options);
+      }
+
+      if (is_object($attr)) {
+        if ($attribute['type'] == 'select' && !empty($attribute['selectOptions'])) {
+
+          if (empty($attribute['selectConfig'])) {
+            $attribute['selectConfig'] = array();
+          }
+
+          $this->addSelectOptions($attr, $attribute['selectConfig'], $attribute['selectOptions']);
+        }
+      }
+    }
+  }//end installUserAttributes()
 
   /**
    * Handles creating select options for Select Attribute Type
