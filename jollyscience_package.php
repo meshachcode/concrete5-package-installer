@@ -429,7 +429,7 @@ if (!class_exists('JollysciencePackage')):
       );
 
       foreach ($fileinfos as $pathname => $fileinfo) {
-        if (!$fileinfo->isFile()) continue;
+        if (!$fileinfo->isFile() || strpos($fileinfo->getFilename(), '.') === 0 || $fileinfo->getFilename() == 'empty') continue;
         $pathname = str_replace(array($path, 'view.php', '.php'), '', $pathname);
         /*       $pathname = rtrim($pathname, '/'); */
 
