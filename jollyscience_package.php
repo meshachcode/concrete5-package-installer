@@ -434,6 +434,46 @@ class JollysciencePackage extends Package {
   }
 
   /**
+   * overrideSinglePage function.
+   * 
+   * Override's a core single page with the 
+   * packages version.
+   *
+   * @access public
+   * @param string $path
+   * @return void
+   */
+  public function overrideSinglePage($path)
+  {
+    $pkg = parent::getByHandle($this->pkgHandle);
+    // Override /profile page
+    $cID = Page::getByPath($path)->getCollectionID();
+    
+    if($cID && $cID !== 1){
+      Loader::db()->execute('update Pages set pkgID = ? where cID = ?', array($pkg->pkgID, $cID));
+    }    
+  }
+
+  /**
+   * unOverrideSinglePage function.
+   * 
+   * UnOverride's a core single page so that
+   * it uses the core version.
+   *
+   * @access public
+   * @param string $path
+   * @return void
+   */
+  public function unOverrideSinglePage($path)
+  {
+    $cID = Page::getByPath($path)->getCollectionID();
+    
+    if($cID && $cID !== 1){
+      Loader::db()->execute('update Pages set pkgID = NULL where cID = ?', array($cID));
+    }    
+  }
+
+  /**
    * Scans `jobs` directory and installs found jobs
    */
   public function installJobs()
