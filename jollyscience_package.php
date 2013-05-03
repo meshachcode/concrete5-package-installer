@@ -108,6 +108,23 @@ class JollysciencePackage extends Package {
    *
    * Attributes that are applied to Users.
    * In the same format as $commonAttributes
+   * One exception is that there is an optional "options"
+   * array which determines whether the attribute is required
+   * and visible on registration and when editing the profile.
+   * The array also configures whether or not the attribute is indexed
+   * for use in custom user searches. The value should be set to 1
+   * or 0:
+   *
+   *   'options' => array(
+   *			'akIsSearchableIndexed' => 0, 
+   *			'akIsSearchable' => 0,
+   *			'uakProfileDisplay' => 0,
+   *			'uakProfileEdit' => 0,
+   *			'uakProfileEditRequired' => 0,
+   *			'uakRegisterEdit' => 0,
+   *			'uakRegisterEditRequired' => 0,
+   *			'uakMemberListDisplay' => 0        
+   *   )   
    *
    * @var array
    * @access protected
