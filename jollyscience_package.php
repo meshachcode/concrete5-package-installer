@@ -365,6 +365,7 @@ if (!class_exists('JollysciencePackage')):
           }
         }
       }
+
     }
   }
 
@@ -648,13 +649,6 @@ if (!class_exists('JollysciencePackage')):
           ),
           $pkg);
 
-        if (!empty($pageTypes)) {
-          foreach ($pageTypes as $pageType) {
-            if (is_object($pageType)) {
-              $pageType->assignCollectionAttribute($attr);
-            }
-          }
-        }
       }
 
       if (is_object($attr)) {
@@ -674,24 +668,14 @@ if (!class_exists('JollysciencePackage')):
 
         if (!empty($pageTypes)) {
           foreach ($pageTypes as $pageType) {
-            $install = true;
-            if (is_object($pageType)) {
-              $availableAttributes = $pageType->getAvailableAttributeKeys();
-
-              foreach ($availableAttributes as $availableAttribute) {
-                if ($availableAttribute->akHandle == $handle) {
-                  $install = false;
-                }
-              }
-
-              if ($install) {
-                $pageType->assignCollectionAttribute($attr);
-              }
+            if (!$pageType->isAvailableCollectionTypeAttribute($attr)) {
+              $pageType->assignCollectionAttribute($attr);
             }
           }
         }
       }
     }
+  }
   }
 
   /**
