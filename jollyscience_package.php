@@ -40,10 +40,6 @@ class JollysciencePackage extends Package {
       die('$pkgHandle must be set.');
     }
 
-    if (!isset($this->pkgHandle)) {
-      die('$pkgHandle must be set.');
-    }
-
     if (!isset($this->appVersionRequired)) {
       die('$appVersionRequired must be set.');
     }
