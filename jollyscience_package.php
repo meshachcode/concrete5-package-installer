@@ -49,6 +49,14 @@ class JollysciencePackage extends Package {
     }
   }
 
+	public function getPackageName() {
+		return t($this->pkgName);
+	}
+
+	public function getPackageDescription() {
+		return t($this->pkgDescription);
+	}
+
   /**
    * commonAttributes
    *
