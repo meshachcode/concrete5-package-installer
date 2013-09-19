@@ -1,24 +1,35 @@
 <?php
+/**
+ * Concrete5  Model Base
+ *
+ * This class handles basic CRUD operations for C5. It implements a basic
+ * `findBy`/`getBy` magic method which can be used to get a record by a condition.
+ * Any subclass must define both a `$pk` and a `$tableName` static vars. `$fields` is
+ * an optional static array that includes the table's field list. If not set, this will
+ * be generated the first timw using mysql `DESCRIBE` functionality, and cached for 
+ * subsequent calls.
+ *
+ * PHP version 5.3
+ *
+ * @package    Concrete5 Model Base
+ * @author     Sam Bernard <sam@jollyscience.com>
+ * @copyright  2013 JollyScience LLC
+ * @license    http://www.wtfpl.net/ WTFPL – Do What the Fuck You Want to Public License
+ * @version    1.0
+ * @link       https://github.com/jollyscience/concrete5-package-installer
+ */
 
 defined("C5_EXECUTE") or die("Access Denied.");
 
 if(!class_exists('JollyscienceModel')):
 
 class JollyscienceModel extends Object {
-  public static $fields = array();
 
-  public static function __callStatic($name, $arguments){
-    if(!empty($arguments) && strpos($name, 'findBy') === 0 || strpos($name, 'getBy') === 0){
-        $field = str_replace('findBy', '', $name);
-        $field = str_replace('getBy', '', $field);
-
-      return static::getBy($field, $arguments[0]);
-    }  
-  }
-
-
+  /**
+   * checks that static vars have been set, loads fields using
+   * `DESCRIBE` if `self::$fields` is not defined.
+   */
   public function __construct(){
-    $class = get_called_class();
     if(!isset(static::$tableName) || empty(static::$tableName)){
       throw new Exception("static var tableName not set");
     }
@@ -49,10 +60,24 @@ class JollyscienceModel extends Object {
 
   }
 
-  static function findBy($field, $value){
-    return static::getBy($field, $value);
+  /**
+   * implements `findBy`/`getBy` magic methods
+   */
+  public static function __callStatic($name, $arguments){
+    if(!empty($arguments) && strpos($name, 'findBy') === 0 || strpos($name, 'getBy') === 0){
+        $field = str_replace('findBy', '', $name);
+        $field = str_replace('getBy', '', $field);
+
+      return static::getBy($field, $arguments[0]);
+    }  
   }
 
+  /**
+   * gets a row by a specific field and value
+   * @param  string $field the field to search by
+   * @param  mixed $value the value of the field to search by
+   * @return object instance of called class if row is found
+   */
   static function getBy($field, $value){
     if(strtolower($field) == 'id'){
       $field = static::$pk;
@@ -70,33 +95,31 @@ class JollyscienceModel extends Object {
     return (is_a($instance, $class)) ? $instance : false;    
   }
 
+  /**
+   * proxy function for getBy
+   * @param  string $field the field to search by
+   * @param  mixed $value the value of the field to search by
+   * @return object instance of called class if row is found
+   */
+  static function findBy($field, $value){
+    return static::getBy($field, $value);
+  }  
+
+  /**
+   * deletes the database row defined by the current instance's primary key value
+   * @return object ADODB result of query
+   */
   public function delete()
   {
     $db = Loader::db();
-    $db->execute(sprintf("DELETE FROM %s WHERE %s = ?", static::$tableName, static::$pk), array($this->getPK()));
+    return $db->execute(sprintf("DELETE FROM %s WHERE %s = ?", static::$tableName, static::$pk), array($this->getPK()));
   }
 
-
-  public function save($data)
-  {
-    $vals = array();
-    $command = array();
-
-    foreach($data as $key => $value){
-      if(in_array($key, static::$fields)|| $key == static::$pk){
-        $command[] =  sprintf(' `%s` = ? ', $key);
-        $vals[] = $value;
-      }
-    }
-    
-    $command = implode(', ', $command);
-    $vals[] =  $this->getPK();
-    $db = Loader::db();
-    $db->query(sprintf("UPDATE %s SET %s WHERE %s = ?", static::$tableName, $command, static::$pk), $vals);
-    $instance = static::getByID($this->getPK());
-    return (is_a($instance, get_called_class())) ? $instance : false;
-  }
-
+  /**
+   * inserts a table row, validates that fields are in `self::$fields`
+   * @param  array $data key-value pairs of table fields/values.
+   * @return object instance of called class if row is created successfully
+   */
   public static function add($data)
   {
     $db = Loader::db();
@@ -128,6 +151,35 @@ class JollyscienceModel extends Object {
     }
   }
 
+  /**
+   * updates a table row, validates that fields are in `self::$fields`
+   * @param  array $data key-value pairs of table fields/values.
+   * @return object instance of called class if row is updated successfully
+   */
+  public function save($data)
+  {
+    $vals = array();
+    $command = array();
+
+    foreach($data as $key => $value){
+      if(in_array($key, static::$fields)|| $key == static::$pk){
+        $command[] =  sprintf(' `%s` = ? ', $key);
+        $vals[] = $value;
+      }
+    }
+    
+    $command = implode(', ', $command);
+    $vals[] =  $this->getPK();
+    $db = Loader::db();
+    $db->query(sprintf("UPDATE %s SET %s WHERE %s = ?", static::$tableName, $command, static::$pk), $vals);
+    $instance = static::getByID($this->getPK());
+    return (is_a($instance, get_called_class())) ? $instance : false;
+  }
+
+  /**
+   * Utility functions get value of instance primary key
+   * @return mixed primary key (int or string)
+   */
   public function getPK()
   {
     return $this->{static::$pk};
