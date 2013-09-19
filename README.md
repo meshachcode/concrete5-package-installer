@@ -14,8 +14,8 @@ by scanning the appropriate directory.
 
 ## Installation
 
-1. Put `jollyscience_package.php` in ``package_dir/libraries/concrete5-package-installer`
-2. In your ``package_dir/controller.php` file, add this line _before_ the class declaration: 
+1. Put `jollyscience_package.php` in `package_dir/libraries/concrete5-package-installer`
+2. In your `package_dir/controller.php` file, add this line _before_ the class declaration: 
 `Loader::library('concrete5-package-installer/jollyscience_package', 'your_package_handle');` 
 where `your_package_handle` is the your package's handle.
 3. Make sure your class extends `JollysciencePackage` instead of `Package`
@@ -156,3 +156,17 @@ Format:
 
 _Note:_ Events call class methods in a non-object context,
 so use `self::$staticVar` or `self::method()` instead of `$this->var` or `$this->method()`
+
+
+Concrete5 Model Base Class
+===========================
+This is a base class which can be extended in projects to more easily handle basic CRUD functinality.
+## Installation
+
+1. Put `jollyscience_model.php` in `package_dir/libraries/concrete5-package-installer`
+2. Create your models in `package_dir/models`
+3. At the top of each model file, add this line _before_ the class declaration: 
+`Loader::library('concrete5-package-installer/jollyscience_model', 'your_package_handle');` 
+where `your_package_handle` is the your package's handle.
+3. Make sure your class extends `JollyscienceModel`
+4. Make sure `self::$tableName` and `self::$pk` are set 
